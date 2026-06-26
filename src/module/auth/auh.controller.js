@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { generateAceesToken, Login, Signup } from "./auth.service.js";
+import { generateAceesToken, GoogleLogin, Login, Signup } from "./auth.service.js";
 import { Success } from "../../common/response/success.response.js";
 import { auth } from "../../common/middleware/auth/auth.js";
 import { validation } from "../../common/middleware/validation.js";
@@ -24,6 +24,9 @@ const router=Router()
         Success({res,message:"success generate access token",data:token})
 
     })
+    router.post("/google-login",async(req,res)=>{
+let data =await GoogleLogin(req.body,req.get("host"))
+Success({res,message:"login successfully",data})})
 
 
 
