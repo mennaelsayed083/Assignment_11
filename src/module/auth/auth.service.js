@@ -1,5 +1,6 @@
 import { env } from "../../../config/env.service.js"
 import { accessToken, generateToken } from "../../common/middleware/auth/auth.js"
+import { encrypted } from "../../common/middleware/security/encryption.js"
 import { compareHash, generateHash } from "../../common/middleware/security/generateHash.js"
 import { BadRequestException, ConflictException, NotFoundException } from "../../common/response/error.response.js"
 import { UserModel } from "../../database/model/user.model.js"
@@ -7,13 +8,14 @@ import { OAuth2Client } from "google-auth-library"
 
 
 export const Signup=async(data)=>{
-    let {name,email,password,uniqueAccName}=data
+    let {name,email,password,phoneNumber,uniqueAccName}=data
     let existedData= await UserModel.findOne({email})
     if(existedData){
         ConflictException({message:"email is already existed"})
     }
     let hashPassword= await generateHash(password)
-    let addUser= await UserModel.create({name,email,password:hashPassword,uniqueAccName})
+    let addUser= await UserModel.create({name,email,password:hashPassword,
+        phoneNumber:await encrypted(data.phoneNumber),uniqueAccName})
     return addUser
 
 }
