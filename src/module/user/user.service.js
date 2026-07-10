@@ -1,3 +1,4 @@
+import { env } from "../../../config/env.service.js"
 import { decrypted } from "../../common/middleware/security/encryption.js"
 import { compareHash, generateHash } from "../../common/middleware/security/generateHash.js"
 import { BadRequestException, ConflictException, NotFoundException } from "../../common/response/error.response.js"
@@ -12,14 +13,20 @@ export const UserData=async(userid)=>{
     return data
 
 }
-export const UpdateUser = async (userid, data) => {
+export const UpdateUser = async (userid, data,file) => {
+    let coverImage=''
+    if(file){
+        coverImage=`${env.server_url}/${file.path}`
+        console.log(coverImage)
+    }
 
     let findUser = await UserModel.findById(userid)
     if (!findUser) {
         NotFoundException({ message: "not found user" })
     }
-    let { name, password, uniqueAccName, newPassword } = data
+    let { name, password, uniqueAccName, newPassword} = data
     let updateData = {}
+    updateData.coverPic=coverImage
     if (name) updateData.name = name
    if (uniqueAccName) {
 
